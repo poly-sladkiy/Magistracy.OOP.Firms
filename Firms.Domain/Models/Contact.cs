@@ -7,12 +7,13 @@ public class Contact
 {
 	private Contact() { }
 
-	public Contact(string description, string dataInfo, ContactType contactType, DateTime? endDt = null)
+	public Contact(string description, string dataInfo, ContactType contactType, DateTime? beginDate = null, DateTime? endDate = null)
 	{
 		Description = description;
 		DataInfo = dataInfo;
 		ContactType = contactType;
-		EndDt = endDt;
+		BeginDt = beginDate ?? default;
+		EndDt = endDate;
 	}
 
 	public DateTime BeginDt { get; private set; } = DateTime.Now;//Дата начала контакта
@@ -29,4 +30,16 @@ public class Contact
 	public string DataInfo { get; private set; } = null!;//Формулировка контакта для клиента
 	public ContactType ContactType { get; private set; } //Вид контакта
 	public Contact Clone() => new(Description, DataInfo, ContactType, _endDt);
+
+	public static bool operator ==(Contact left, Contact right)
+	{
+		return
+			( left.BeginDt, left.EndDt, left.Description, left.ContactType.Name, left.ContactType.Note, left.DataInfo )
+			== ( right.BeginDt, right.EndDt, right.Description, right.ContactType.Name, right.ContactType.Note, right.DataInfo );
+	}
+
+	public static bool operator !=(Contact left, Contact right)
+	{
+		return !(left == right);
+	}
 }
