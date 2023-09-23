@@ -4,16 +4,24 @@ public class Contact
 {
 	private Contact() { }
 
-	public Contact(DateTime? endDt, string description, string dataInfo, ContactType contactType)
+	public Contact(string description, string dataInfo, ContactType contactType, DateTime? endDt = null)
 	{
-		EndDt = endDt;
 		Description = description;
 		DataInfo = dataInfo;
 		ContactType = contactType;
+		EndDt = endDt;
 	}
 
-	public DateTime BeginDt = DateTime.Now;//Дата начала контакта
-	public DateTime? EndDt { get; private set; } = null;//Дата завершения контакта
+	public DateTime BeginDt { get; private set; } = DateTime.Now;//Дата начала контакта
+
+	private DateTime? _endDt = null;
+
+	public DateTime? EndDt
+	{
+		get => _endDt;
+		set => _endDt ??= value;
+	} //Дата завершения контакта
+
 	public string Description { get; private set; } = null!;//Описание контакта для себя
 	public string DataInfo { get; private set; } = null!;//Формулировка контакта для клиента
 	public ContactType ContactType { get; private set; } //Вид контакта
