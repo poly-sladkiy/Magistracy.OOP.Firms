@@ -1,5 +1,8 @@
 ﻿namespace Firms.Domain.Models;
 
+/// <summary>
+/// This class for history of contacts 
+/// </summary>
 public class Contact
 {
 	private Contact() { }
