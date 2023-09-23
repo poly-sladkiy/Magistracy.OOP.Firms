@@ -5,14 +5,14 @@ namespace Firms.Models;
 public class FirmFactory
 {
 	private FirmFactory() { }
-	private FirmFactory? _factory = null;
+	private static FirmFactory? _factory = null;
 
-	public FirmFactory? Factory
+	public static FirmFactory? Factory
 	{
 		get
 		{
-			this._factory ??= new FirmFactory();
-			return this._factory;
+			_factory ??= new FirmFactory();
+			return _factory;
 		}
 	}
 }
