@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Firms.Models;
+﻿namespace Firms.Domain.Models;
 
 public class FirmFactory
 {

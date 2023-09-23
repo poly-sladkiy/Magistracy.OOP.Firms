@@ -1,4 +1,4 @@
-﻿namespace Firms.Models;
+﻿namespace Firms.Domain.Models;
 
 public class Firm
 {
