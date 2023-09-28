@@ -2,7 +2,8 @@
 
 public class SubFirm
 {
-	private SubFirm() { }
+	private SubFirm()
+	{ }
 
 	public SubFirm(string name, string bossName, string ofcBossName, string tel, string email, SubFirmType subFirmType)
 	{
@@ -21,4 +22,13 @@ public class SubFirm
 	public string Email { get; private set; } = null!;//Почтовый адрес подразделения
 	public SubFirmType SubFirmType { get; private set; } = null!;//Тип подразделения
 	public List<Contact> Contacts { get; private set; } = new(); //Контакты подразделения
+
+	public void AddContact(Contact contact)
+		=> Contacts.Add(contact);
+
+	public bool ExistContact(Contact contact)
+		=> Contacts.Exists(x => x == contact);
+
+	public bool IsYourType(SubFirmType type)
+		=> this.SubFirmType.Name == type.Name;
 }
