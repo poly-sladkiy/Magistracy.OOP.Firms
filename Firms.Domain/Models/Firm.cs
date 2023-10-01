@@ -2,7 +2,8 @@
 
 public class Firm
 {
-	public Firm() { }
+	private Firm()
+	{ }
 
 	public Firm(string name, string shortName, string country, string region, string town, string street, string postIndex, string email, string web)
 	{
@@ -28,18 +29,41 @@ public class Firm
 	public string Email { get; private set; } = null!;//Почтовый адрес фирмы
 	public string Web { get; private set; } = null!;//URL-адрес сайта
 
+	public bool ExistContact(ContactType type)
+		=> SubFirms.Exists(_ => _.Contacts.Exists(x => x.ContactType.Name == type.Name));
+
+	/// <summary>
+	/// в главную передать
+	/// </summary>
+	/// <param name="contact"></param>
+	public void AddContact(Contact contact)
+	{
+		var mainSubFirm = SubFirms.SingleOrDefault(x => x.SubFirmType.IsMain);
+		if (mainSubFirm == null) return;
+
+		mainSubFirm.AddContact(contact);
+	}
+
 	#region sub firms fields
-	
+
 	public List<SubFirm> SubFirms { get; private set; } = new();//Подразделения фирмы
+
 	public int SubFirmsCount => SubFirms.Count;
+
 	public SubFirm GetMain() => SubFirms.First(x => x.SubFirmType.IsMain);
 
-	#endregion
+	public void AddSubFirm(SubFirm subFirm)
+		=> SubFirms.Add(subFirm);
+
+	#endregion sub firms fields
 
 	#region user fields
+
 	public Dictionary<string, string> UserFields { get; private set; } = new();//Пользовательские поля
+
 	public void SetField(string name, string value)
 		=> UserFields[name] = value;
+
 	public void RenameField(string oldName, string newName)
 	{
 		var data = UserFields[oldName];
@@ -50,6 +74,5 @@ public class Firm
 	public string GetField(string name)
 		=> UserFields[name];
 
-	#endregion
-
+	#endregion user fields
 }
