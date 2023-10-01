@@ -11,6 +11,13 @@ public class SubFirmTypeCollection : IEnumerable<SubFirmType>
 		_lst = value;
 	}
 
+	public int Count => _lst.Count;
+
+	public void Add(SubFirmType type)
+		=> _lst.Add(type);
+
+	public void Clear() => _lst.Clear();
+
 	public IEnumerator<SubFirmType> GetEnumerator()
 		=> _lst.GetEnumerator();
 
