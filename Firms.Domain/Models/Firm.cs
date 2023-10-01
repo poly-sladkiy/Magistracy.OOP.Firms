@@ -29,8 +29,8 @@ public class Firm
 	public string Email { get; private set; } = null!;//Почтовый адрес фирмы
 	public string Web { get; private set; } = null!;//URL-адрес сайта
 
-	public bool ExistContact(ContactType type)
-		=> SubFirms.Exists(_ => _.Contacts.Exists(x => x.ContactType.Name == type.Name));
+	public bool ExistContact(Contact contact)
+		=> SubFirms.Exists(_ => _.ExistContact(contact));
 
 	/// <summary>
 	/// в главную передать
