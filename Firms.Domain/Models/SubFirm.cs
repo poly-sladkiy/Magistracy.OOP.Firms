@@ -24,7 +24,7 @@ public class SubFirm
 	public List<Contact> Contacts { get; private set; } = new(); //Контакты подразделения
 
 	public void AddContact(Contact contact)
-		=> Contacts.Add(contact);
+		=> Contacts.Add(contact.Clone());
 
 	public bool ExistContact(Contact contact)
 		=> Contacts.Exists(x => x == contact);

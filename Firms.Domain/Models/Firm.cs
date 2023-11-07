@@ -30,7 +30,7 @@ public class Firm
 	public string Web { get; private set; } = null!;//URL-адрес сайта
 
 	public bool ExistContact(Contact contact)
-		=> SubFirms.Exists(_ => _.ExistContact(contact));
+		=> SubFirms.Exists(sb => sb.ExistContact(contact));
 
 	/// <summary>
 	/// в главную передать

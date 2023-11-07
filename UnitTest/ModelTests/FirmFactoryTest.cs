@@ -9,14 +9,23 @@ public class FirmFactoryTest
 {
 	private string[] Towns = new[] { "Нижний Новгород", "Владимир", "Бор", "Кстово" };
 
-	private SubFirmTypeCollection SubFirmTypes = new SubFirmTypeCollection(new List<SubFirmType>()
+	private SubFirmTypeCollection SubFirmTypes = new(new List<SubFirmType>()
 	{
-		new SubFirmType(isMain: true, name: "Основной офис"),
-		new SubFirmType(isMain: false, name: "Отдел маркетинга"),
-		new SubFirmType(isMain: false, name: "Отдел снабжения"),
-		new SubFirmType(isMain: false, name: "Отдел качества"),
+		new(isMain: true, name: "Основной офис"),
+		new(isMain: false, name: "Отдел маркетинга"),
+		new(isMain: false, name: "Отдел снабжения"),
+		new(isMain: false, name: "Отдел качества"),
 	});
 
+	private readonly List<ContactType> ContactTypes = new()
+	{
+		new("Email", "электронная почта"),
+		new("Letter", "Почта"),
+		new("Call", "Звонок"),
+		//new("Call", "Звонок"),
+	};
+
+	private readonly List<Contact> Contacts = new List<Contact>();
 
 	public void GenerateRandomsFirmsViaFirmFactory(int count = 10, bool addSubfirms = false)
 	{
@@ -38,10 +47,7 @@ public class FirmFactoryTest
 				$"email_{i}@email.com",
 				$"www.Web_{i}.com");
 
-			//if (addSubfirms && countSimpleFirms-- > 0)
-			//	AddSubfirms(firm);
-			//else if (addSubfirms && countBigFirms-- > 0)
-			//	AddSubfirms(firm, false);
+			firm.AddSubFirm(new SubFirm($"Subfirm_{i}", "Name", "Off name", "Phone", "email", new(true, "Основной офис")));
 		}
 	}
 
@@ -93,10 +99,21 @@ public class FirmFactoryTest
 
 		foreach (var town in Towns)
 		{
-			var firms = FirmFactory.Firms.Where(x => x.Country == town).ToList();
+			var firms = FirmFactory.Firms.Where(x => x.Town == town).ToList();
 
 			Assert.IsNotNull(firms);
-			Assert.IsTrue(firms.All(x => x.Country == town));
+			Assert.IsTrue(firms.All(x => x.Town == town));
+		}
+	}
+
+	[TestMethod]
+	public void ValidateAddingContact()
+	{
+		GenerateRandomsFirmsViaFirmFactory(3);
+
+		foreach (var town in FirmFactory.Firms)
+		{
+			town.AddContact(new Contact("desc", "data info", new ContactType("Письмо", "письмо"), DateTime.Now));
 		}
 	}
 }
