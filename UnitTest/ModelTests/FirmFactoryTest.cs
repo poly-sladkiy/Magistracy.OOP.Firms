@@ -109,11 +109,36 @@ public class FirmFactoryTest
 	[TestMethod]
 	public void ValidateAddingContact()
 	{
-		GenerateRandomsFirmsViaFirmFactory(3);
+		var rnd = new Random();
+		var countOfFirmsForContact = 10;
+		var firmsForContact = new List<Firm>();
+		var allFirms = new List<Firm>();
 
-		foreach (var town in FirmFactory.Firms)
+		var contact = new Contact("description", "data info", new("Письмо", "письмо"));
+
+		GenerateRandomsFirmsViaFirmFactory(50);
+		allFirms = FirmFactory.Firms;
+
+		while (countOfFirmsForContact-- >= 0)
 		{
-			town.AddContact(new Contact("desc", "data info", new ContactType("Письмо", "письмо"), DateTime.Now));
+			var randFirm = allFirms[rnd.Next(allFirms.Count)];
+			firmsForContact.Add(randFirm);
+			allFirms.Remove(randFirm);
+		}
+
+		foreach (var firm in firmsForContact)
+		{
+			firm.AddContact(contact);
+		}
+
+		foreach (var firm in firmsForContact)
+		{
+			Assert.IsTrue(firm.ExistContact(contact));
+		}
+
+		foreach (var firm in allFirms)
+		{
+			Assert.IsFalse(firm.ExistContact(contact));
 		}
 	}
 }
