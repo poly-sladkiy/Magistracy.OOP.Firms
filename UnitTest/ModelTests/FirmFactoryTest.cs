@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using Firms.Domain.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+﻿using Firms.Domain.Models;
 
 namespace UnitTest.ModelTests;
 
@@ -11,10 +9,13 @@ public class FirmFactoryTest
 
 	private SubFirmTypeCollection SubFirmTypes = new(new List<SubFirmType>()
 	{
-		new(isMain: true, name: "Основной офис"),
 		new(isMain: false, name: "Отдел маркетинга"),
 		new(isMain: false, name: "Отдел снабжения"),
 		new(isMain: false, name: "Отдел качества"),
+		new(isMain: false, name: "Отдел администрации"),
+		new(isMain: false, name: "Отдел кадров"),
+		new(isMain: false, name: "Отдел охраны"),
+		new(isMain: false, name: "Отдел разработки"),
 	});
 
 	private readonly List<ContactType> ContactTypes = new()
@@ -51,14 +52,12 @@ public class FirmFactoryTest
 		}
 	}
 
-	//private void AddSubfirms(Firm firm, bool isSimple = true)
+	//private void AddSubfirms(Firms.Domain.Models.Firm firm)
 	//{
 	//	var rnd = new Random();
+	//	var types = rnd.Shuffle(SubFirmTypes.ToArray());
 
-	//	if (isSimple) // todo: add sunfirm type
-	//		firm.AddSubFirm(new SubFirm($"Name_{firm.Name}", $"boss {firm.Name}", $"Big boss {firm.Name}", $"{rnd.Next(100_000, 999_999)}", $"sub_firm_{firm.Email}", SubFirmTypes.GetEnumerator().));
-			
-	//	// todo: rnd select count of subfirms [2, SubFirmTypes.Length] - maybe replace to List
+
 	//}
 
 	[TestMethod]
@@ -115,6 +114,42 @@ public class FirmFactoryTest
 		var allFirms = new List<Firm>();
 
 		var contact = new Contact("description", "data info", new("Письмо", "письмо"));
+
+		GenerateRandomsFirmsViaFirmFactory(50);
+		allFirms = FirmFactory.Firms;
+
+		while (countOfFirmsForContact-- >= 0)
+		{
+			var randFirm = allFirms[rnd.Next(allFirms.Count)];
+			firmsForContact.Add(randFirm);
+			allFirms.Remove(randFirm);
+		}
+
+		foreach (var firm in firmsForContact)
+		{
+			firm.AddContact(contact);
+		}
+
+		foreach (var firm in firmsForContact)
+		{
+			Assert.IsTrue(firm.ExistContact(contact));
+		}
+
+		foreach (var firm in allFirms)
+		{
+			Assert.IsFalse(firm.ExistContact(contact));
+		}
+	}
+
+	[TestMethod]
+	public void ValidateAddingContactToSpecialSubFirm()
+	{
+		var rnd = new Random();
+		var countOfFirmsForContact = 10;
+		var firmsForContact = new List<Firm>();
+		var allFirms = new List<Firm>();
+
+		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
 
 		GenerateRandomsFirmsViaFirmFactory(50);
 		allFirms = FirmFactory.Firms;

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Firm.Helper\Firm.Helper.csproj" />
     <ProjectReference Include="..\Firms.Domain\Firms.Domain.csproj" />
   </ItemGroup>
 
