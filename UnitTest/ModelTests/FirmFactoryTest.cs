@@ -1,4 +1,5 @@
-﻿using Firms.Domain.Models;
+﻿using Firm.Helper.Extensions;
+using Firms.Domain.Models;
 
 namespace UnitTest.ModelTests;
 
@@ -49,21 +50,36 @@ public class FirmFactoryTest
 				$"www.Web_{i}.com");
 
 			firm.AddSubFirm(new SubFirm($"Subfirm_{i}", "Name", "Off name", "Phone", "email", new(true, "Основной офис")));
+
+			AddSubfirms(firm);
 		}
 	}
 
-	//private void AddSubfirms(Firms.Domain.Models.Firm firm)
-	//{
-	//	var rnd = new Random();
-	//	var types = rnd.Shuffle(SubFirmTypes.ToArray());
+	private void AddSubfirms(Firms.Domain.Models.Firm firm)
+	{
+		var rnd = new Random();
+		var countOfSubfirmTypes = rnd.Next(SubFirmTypes.Count);
+		var shuffledSubFirmTypes = SubFirmTypes.Shuffle().ToList();
 
-
-	//}
+		for (int i = 0; i < countOfSubfirmTypes; i++)
+		{
+			firm.AddSubFirm(
+				new SubFirm(
+					$"{firm.Name}_subfirm_{i}", 
+					$"short_boss_{i}", 
+					$"big_boss_{i}", 
+					$"phone_{i}", 
+					$"{firm.Name}_i@mail.ru", 
+					shuffledSubFirmTypes[i]
+				)
+			);
+		}
+	}
 
 	[TestMethod]
 	public void TestCreateFirmFromFabric()
 	{
-		var localFirm = new Firm("Name", "ShortName", "Country", "Region", "Town", "Street", "postIndex", "Email",
+		var localFirm = new Firms.Domain.Models.Firm("Name", "ShortName", "Country", "Region", "Town", "Street", "postIndex", "Email",
 			"Web");
 
 		var fabricFirm = FirmFactory
@@ -110,8 +126,8 @@ public class FirmFactoryTest
 	{
 		var rnd = new Random();
 		var countOfFirmsForContact = 10;
-		var firmsForContact = new List<Firm>();
-		var allFirms = new List<Firm>();
+		var firmsForContact = new List<Firms.Domain.Models.Firm>();
+		var allFirms = new List<Firms.Domain.Models.Firm>();
 
 		var contact = new Contact("description", "data info", new("Письмо", "письмо"));
 
@@ -146,34 +162,22 @@ public class FirmFactoryTest
 	{
 		var rnd = new Random();
 		var countOfFirmsForContact = 10;
-		var firmsForContact = new List<Firm>();
-		var allFirms = new List<Firm>();
+		var firmsForContact = new List<Firms.Domain.Models.Firm>();
+		var allFirms = new List<Firms.Domain.Models.Firm>();
 
 		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
 
 		GenerateRandomsFirmsViaFirmFactory(50);
-		allFirms = FirmFactory.Firms;
 
-		while (countOfFirmsForContact-- >= 0)
+		foreach (var subFirmType in SubFirmTypes)
 		{
-			var randFirm = allFirms[rnd.Next(allFirms.Count)];
-			firmsForContact.Add(randFirm);
-			allFirms.Remove(randFirm);
-		}
+			FirmFactory.Firms.ForEach(f =>
+			{
+				f.AddContactToSubFirm(contact, subFirmType);
 
-		foreach (var firm in firmsForContact)
-		{
-			firm.AddContact(contact);
-		}
-
-		foreach (var firm in firmsForContact)
-		{
-			Assert.IsTrue(firm.ExistContact(contact));
-		}
-
-		foreach (var firm in allFirms)
-		{
-			Assert.IsFalse(firm.ExistContact(contact));
+				if (f.SubFirms.Any(sf => sf.SubFirmType == subFirmType))
+					Assert.IsTrue(f.ExistContact(contact));
+			});
 		}
 	}
 }

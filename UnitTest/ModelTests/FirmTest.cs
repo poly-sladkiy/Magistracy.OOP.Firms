@@ -13,7 +13,7 @@ public class FirmTest
 	{
 		#region arrange
 
-		var firm = new Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
+		var firm = new Firms.Domain.Models.Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
 		var subFirm = new SubFirm("sub name", "boos name", "off boss name", "phone", "email",
 			new SubFirmType(true, "sub firm type"));
 		var contact = new Contact("description", "data info",
@@ -42,7 +42,7 @@ public class FirmTest
 	[TestMethod]
 	public void ValidateSetAndGetUserFields()
 	{
-		var firm = new Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
+		var firm = new Firms.Domain.Models.Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
 		
 		var fieldKey = "test key";
 		var fieldValue = "test value";
@@ -58,7 +58,7 @@ public class FirmTest
 	[TestMethod]
 	public void ValidateRenameField()
 	{
-		var firm = new Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
+		var firm = new Firms.Domain.Models.Firm("name", "short name", "country", "region", "town", "street", "post index", "email", "web");
 
 		var fieldKey = "test key";
 		var fieldValue = "test value";
@@ -71,6 +71,8 @@ public class FirmTest
 
 		Assert.AreEqual(fieldValue, firmValue);
 		Assert.IsFalse(firm.UserFields.Any(x => x.Key == fieldKey));
+
+
 	}
 
 	#endregion
