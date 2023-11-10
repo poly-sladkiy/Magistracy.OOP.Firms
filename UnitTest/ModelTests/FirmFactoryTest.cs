@@ -1,4 +1,5 @@
-﻿using Firm.Helper.Extensions;
+﻿using System.Text.Json;
+using Firm.Helper.Extensions;
 using Firms.Domain.Models;
 
 namespace UnitTest.ModelTests;
@@ -8,10 +9,12 @@ public class FirmFactoryTest
 {
 	private string[] Towns = new[] { "Нижний Новгород", "Владимир", "Бор", "Кстово" };
 
+	private static SubFirmType SupplyDepartment = new(isMain: false, name: "Отдел снабжения");
+
 	private SubFirmTypeCollection SubFirmTypes = new(new List<SubFirmType>()
 	{
 		new(isMain: false, name: "Отдел маркетинга"),
-		new(isMain: false, name: "Отдел снабжения"),
+		SupplyDepartment,
 		new(isMain: false, name: "Отдел качества"),
 		new(isMain: false, name: "Отдел администрации"),
 		new(isMain: false, name: "Отдел кадров"),
@@ -160,24 +163,18 @@ public class FirmFactoryTest
 	[TestMethod]
 	public void ValidateAddingContactToSpecialSubFirm()
 	{
-		var rnd = new Random();
-		var countOfFirmsForContact = 10;
-		var firmsForContact = new List<Firms.Domain.Models.Firm>();
-		var allFirms = new List<Firms.Domain.Models.Firm>();
-
 		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
 
 		GenerateRandomsFirmsViaFirmFactory(50);
 
-		foreach (var subFirmType in SubFirmTypes)
+		FirmFactory.Firms.ForEach(f =>
 		{
-			FirmFactory.Firms.ForEach(f =>
-			{
-				f.AddContactToSubFirm(contact, subFirmType);
+			f.AddContactToSubFirm(contact, SupplyDepartment);
 
-				if (f.SubFirms.Any(sf => sf.SubFirmType == subFirmType))
-					Assert.IsTrue(f.ExistContact(contact));
-			});
-		}
+			if (f.SubFirms.Any(sf => sf.SubFirmType == SupplyDepartment))
+				Assert.IsTrue(f.ExistContact(contact));
+		});
+
+		Console.WriteLine(JsonSerializer.Serialize(FirmFactory.Firms));
 	}
 }
