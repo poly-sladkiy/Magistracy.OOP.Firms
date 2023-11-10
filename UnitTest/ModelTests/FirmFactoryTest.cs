@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Firm.Helper.Extensions;
 using Firms.Domain.Models;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace UnitTest.ModelTests;
 
@@ -181,13 +182,14 @@ public class FirmFactoryTest
 		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
 
 		GenerateRandomsFirmsViaFirmFactory(50);
+		FirmFactory.Firms.ForEach(f => f.AddContactToSubFirm(contact, SupplyDepartment, true));
 
-		FirmFactory.Firms.ForEach(f =>
-		{
-			
-		});
+		var firmsWithoutSupplyDepartmentAndWithOneSubfirm = 
+			FirmFactory.Firms.Where(firm => firm.SubFirms.Any(sf => sf.IsYourType(SupplyDepartment) == false) && firm.SubFirms.Count == 0).ToList();
+
+		firmsWithoutSupplyDepartmentAndWithOneSubfirm
+			.ForEach(f => Assert.IsTrue(f.ExistContact(contact)));
 
 		Console.WriteLine(JsonSerializer.Serialize(FirmFactory.Firms));
 	}
-
 }

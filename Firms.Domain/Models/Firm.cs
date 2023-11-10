@@ -52,7 +52,7 @@ public class Firm
 			return;
 		}
 
-		if (SubFirms.Count == 1)
+		if (SubFirms.Count == 1 && checkOtherTypes)
 			this.AddContact(contact);
 	}
 
