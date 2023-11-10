@@ -39,13 +39,21 @@ public class Firm
 	public void AddContact(Contact contact)
 	{
 		var mainSubFirm = SubFirms.SingleOrDefault(x => x.SubFirmType.IsMain);
-		mainSubFirm?.AddContact(contact.Clone());
+		mainSubFirm?.AddContact(contact);
 	}
 
-	public void AddContactToSubFirm(Contact contact, SubFirmType subFirmType)
+	public void AddContactToSubFirm(Contact contact, SubFirmType subFirmType, bool checkOtherTypes = false)
 	{
 		var subFirm = SubFirms.FirstOrDefault(x => x.SubFirmType == subFirmType);
-		subFirm?.AddContact(contact.Clone());
+
+		if (subFirm is not null)
+		{
+			subFirm.AddContact(contact);
+			return;
+		}
+
+		if (SubFirms.Count == 1)
+			this.AddContact(contact);
 	}
 
 	#region sub firms fields

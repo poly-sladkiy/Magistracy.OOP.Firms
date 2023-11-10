@@ -36,9 +36,6 @@ public class FirmFactoryTest
 	{
 		var rnd = new Random();
 		
-		var countSimpleFirms = rnd.Next(count / 2);
-		var countBigFirms = count - countSimpleFirms;
-
 		for (int i = 0; i < count; i++)
 		{
 			var firm = FirmFactory.Factory.Create(
@@ -161,7 +158,7 @@ public class FirmFactoryTest
 	}
 
 	[TestMethod]
-	public void ValidateAddingContactToSpecialSubFirm()
+	public void ValidateRandomAddingContactToSpecialSubFirm()
 	{
 		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
 
@@ -177,4 +174,20 @@ public class FirmFactoryTest
 
 		Console.WriteLine(JsonSerializer.Serialize(FirmFactory.Firms));
 	}
+
+	[TestMethod]
+	public void ValidateRandomAddingContactToSpecialSubFirmWithAddingParametr()
+	{
+		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
+
+		GenerateRandomsFirmsViaFirmFactory(50);
+
+		FirmFactory.Firms.ForEach(f =>
+		{
+			
+		});
+
+		Console.WriteLine(JsonSerializer.Serialize(FirmFactory.Firms));
+	}
+
 }
