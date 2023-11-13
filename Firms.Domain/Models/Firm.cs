@@ -5,7 +5,7 @@ public class Firm
 	private Firm()
 	{ }
 
-	public Firm(string name, string shortName, string country, string region, string town, string street, string postIndex, string email, string web)
+	public Firm(string name, string shortName, string country, string region, string town, string street, string postIndex, string email, string web, Dictionary<string, string>? fields = null)
 	{
 		Name = name;
 		ShortName = shortName;
@@ -16,6 +16,7 @@ public class Firm
 		PostIndex = postIndex;
 		Email = email;
 		Web = web;
+		UserFields = fields ?? new Dictionary<string, string>();
 	}
 
 	public string Name { get; private set; } = null!; //Полное наименование фирмы

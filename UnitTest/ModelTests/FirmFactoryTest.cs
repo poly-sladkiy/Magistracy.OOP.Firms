@@ -50,8 +50,6 @@ public class FirmFactoryTest
 				$"email_{i}@email.com",
 				$"www.Web_{i}.com");
 
-			firm.AddSubFirm(new SubFirm($"Subfirm_{i}", "Name", "Off name", "Phone", "email", new(true, "Основной офис")));
-
 			AddSubfirms(firm);
 		}
 	}
@@ -80,8 +78,17 @@ public class FirmFactoryTest
 	[TestMethod]
 	public void TestCreateFirmFromFabric()
 	{
+		var userFields = new Dictionary<string, string>()
+		{
+			{"key_1", "value_1"},
+			{"key_2", "value_2"},
+			{"key_3", "value_3"},
+			{"key_4", "value_4"},
+			{"key_5", "value_5"},
+		};
+
 		var localFirm = new Firms.Domain.Models.Firm("Name", "ShortName", "Country", "Region", "Town", "Street", "postIndex", "Email",
-			"Web");
+			"Web", userFields);
 
 		var fabricFirm = FirmFactory
 			.Factory.Create(
@@ -93,7 +100,8 @@ public class FirmFactoryTest
 				localFirm.Street,
 				localFirm.PostIndex,
 				localFirm.Email,
-				localFirm.Web);
+				localFirm.Web,
+				localFirm.UserFields);
 
 		Assert.IsNotNull(fabricFirm);
 		Assert.IsTrue(FirmFactory.Firms.Count > 0);
@@ -106,6 +114,7 @@ public class FirmFactoryTest
 		Assert.AreEqual(localFirm.PostIndex, fabricFirm.PostIndex);
 		Assert.AreEqual(localFirm.Email, fabricFirm.Email);
 		Assert.AreEqual(localFirm.Web, fabricFirm.Web);
+		Assert.AreEqual(localFirm.UserFields, fabricFirm.UserFields);
 	}
 
 	[TestMethod]
@@ -122,8 +131,28 @@ public class FirmFactoryTest
 		}
 	}
 
+	/// <summary>
+	/// Проверка добавленного контакта по значению и по ссылке
+	/// </summary>
 	[TestMethod]
-	public void ValidateAddingContact()
+	public void ValidateAddContactToFirmAndContactsReferencesNotEqual()
+	{
+		var contact = new Contact("description", "data info", new("Коммерческое предложение", "письмо"));
+
+		GenerateRandomsFirmsViaFirmFactory(1);
+		var firm = FirmFactory.Firms.First();
+		firm.AddContact(contact);
+
+		// получаем контакт фирмы
+		var firmContact = firm.SubFirms.First(x => x.ExistContact(contact)).Contacts!.First();
+
+		Assert.IsNotNull(firmContact);
+		Assert.IsTrue(contact == firmContact);
+		Assert.IsFalse(ReferenceEquals(contact, firmContact));
+	}
+
+	[TestMethod]
+	public void ValidateAddingContactToMultipleFirms()
 	{
 		var rnd = new Random();
 		var countOfFirmsForContact = 10;
