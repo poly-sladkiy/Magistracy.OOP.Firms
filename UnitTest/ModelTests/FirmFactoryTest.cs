@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Firm.Helper.Extensions;
 using Firms.Domain.Models;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace UnitTest.ModelTests;
 
@@ -36,7 +35,7 @@ public class FirmFactoryTest
 	public void GenerateRandomsFirmsViaFirmFactory(int count = 10, bool addSubfirms = false)
 	{
 		var rnd = new Random();
-		
+
 		for (int i = 0; i < count; i++)
 		{
 			var firm = FirmFactory.Factory.Create(
@@ -64,11 +63,11 @@ public class FirmFactoryTest
 		{
 			firm.AddSubFirm(
 				new SubFirm(
-					$"{firm.Name}_subfirm_{i}", 
-					$"short_boss_{i}", 
-					$"big_boss_{i}", 
-					$"phone_{i}", 
-					$"{firm.Name}_i@mail.ru", 
+					$"{firm.Name}_subfirm_{i}",
+					$"short_boss_{i}",
+					$"big_boss_{i}",
+					$"phone_{i}",
+					$"{firm.Name}_i@mail.ru",
 					shuffledSubFirmTypes[i]
 				)
 			);
@@ -78,17 +77,24 @@ public class FirmFactoryTest
 	[TestMethod]
 	public void TestCreateFirmFromFabric()
 	{
-		var userFields = new Dictionary<string, string>()
+		var field1 = "field_1";
+		var field2 = "field_2";
+		var field3 = "field_3";
+		var field4 = "field_4";
+		var field5 = "field_5";
+
+		var fields = new Dictionary<string, string>()
 		{
-			{"key_1", "value_1"},
-			{"key_2", "value_2"},
-			{"key_3", "value_3"},
-			{"key_4", "value_4"},
-			{"key_5", "value_5"},
+			{FirmFactory.UserField1, field1},
+			{FirmFactory.UserField2, field2},
+			{FirmFactory.UserField3, field3},
+			{FirmFactory.UserField4, field4},
+			{FirmFactory.UserField5, field5},
 		};
 
 		var localFirm = new Firms.Domain.Models.Firm("Name", "ShortName", "Country", "Region", "Town", "Street", "postIndex", "Email",
-			"Web", userFields);
+			"Web", fields
+			);
 
 		var fabricFirm = FirmFactory
 			.Factory.Create(
@@ -101,7 +107,12 @@ public class FirmFactoryTest
 				localFirm.PostIndex,
 				localFirm.Email,
 				localFirm.Web,
-				localFirm.UserFields);
+				field1,
+				field2,
+				field3,
+				field4,
+				field5
+				);
 
 		Assert.IsNotNull(fabricFirm);
 		Assert.IsTrue(FirmFactory.Firms.Count > 0);
@@ -114,7 +125,14 @@ public class FirmFactoryTest
 		Assert.AreEqual(localFirm.PostIndex, fabricFirm.PostIndex);
 		Assert.AreEqual(localFirm.Email, fabricFirm.Email);
 		Assert.AreEqual(localFirm.Web, fabricFirm.Web);
-		Assert.AreEqual(localFirm.UserFields, fabricFirm.UserFields);
+
+		Assert.IsNotNull(fabricFirm.GetMain());
+
+		Assert.AreEqual(localFirm.GetField(FirmFactory.UserField1), fields[FirmFactory.UserField1]);
+		Assert.AreEqual(localFirm.GetField(FirmFactory.UserField2), fields[FirmFactory.UserField2]);
+		Assert.AreEqual(localFirm.GetField(FirmFactory.UserField3), fields[FirmFactory.UserField3]);
+		Assert.AreEqual(localFirm.GetField(FirmFactory.UserField4), fields[FirmFactory.UserField4]);
+		Assert.AreEqual(localFirm.GetField(FirmFactory.UserField5), fields[FirmFactory.UserField5]);
 	}
 
 	[TestMethod]
@@ -187,6 +205,9 @@ public class FirmFactoryTest
 		}
 	}
 
+	/// <summary>
+	/// Проверка добавления контакта в отдел снабжения и проверка существания контакта в фирме
+	/// </summary>
 	[TestMethod]
 	public void ValidateRandomAddingContactToSpecialSubFirm()
 	{
@@ -205,6 +226,9 @@ public class FirmFactoryTest
 		Console.WriteLine(JsonSerializer.Serialize(FirmFactory.Firms));
 	}
 
+	/// <summary>
+	/// проверка добавления контакта в соответвующее подразделение
+	/// </summary>
 	[TestMethod]
 	public void ValidateRandomAddingContactToSpecialSubFirmWithAddingParametr()
 	{
@@ -213,7 +237,7 @@ public class FirmFactoryTest
 		GenerateRandomsFirmsViaFirmFactory(50);
 		FirmFactory.Firms.ForEach(f => f.AddContactToSubFirm(contact, SupplyDepartment, true));
 
-		var firmsWithoutSupplyDepartmentAndWithOneSubfirm = 
+		var firmsWithoutSupplyDepartmentAndWithOneSubfirm =
 			FirmFactory.Firms.Where(firm => firm.SubFirms.Any(sf => sf.IsYourType(SupplyDepartment) == false) && firm.SubFirms.Count == 0).ToList();
 
 		firmsWithoutSupplyDepartmentAndWithOneSubfirm

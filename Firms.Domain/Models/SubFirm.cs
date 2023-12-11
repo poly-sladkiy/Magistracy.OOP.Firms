@@ -21,13 +21,16 @@ public class SubFirm
 	public string Phone { get; private set; } = null!;//номер телефона подразделения
 	public string Email { get; private set; } = null!;//Почтовый адрес подразделения
 	public SubFirmType SubFirmType { get; private set; } = null!;//Тип подразделения
-	public List<Contact> Contacts { get; private set; } = new(); //Контакты подразделения
+	
+	public List<Contact> _contacts = new(); //Контакты подразделения
+
+	public List<Contact> Contacts => new(_contacts);
 
 	public void AddContact(Contact contact)
-		=> Contacts.Add(contact.Clone());
+		=> _contacts.Add(contact.Clone());
 
 	public bool ExistContact(Contact contact)
-		=> Contacts.Exists(x => x == contact);
+		=> _contacts.Exists(x => x == contact);
 
 	public bool IsYourType(SubFirmType type)
 		=> this.SubFirmType.Name == type.Name;

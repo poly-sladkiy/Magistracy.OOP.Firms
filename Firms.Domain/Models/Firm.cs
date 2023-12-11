@@ -1,11 +1,15 @@
-﻿namespace Firms.Domain.Models;
+﻿using System.Diagnostics;
+
+namespace Firms.Domain.Models;
 
 public class Firm
 {
 	private Firm()
 	{ }
 
-	public Firm(string name, string shortName, string country, string region, string town, string street, string postIndex, string email, string web, Dictionary<string, string>? fields = null)
+	public Firm(string name, string shortName, string country, string region, string town, string street, string postIndex, string email, string web,
+				Dictionary<string, string>? fields = null
+	)
 	{
 		Name = name;
 		ShortName = shortName;
@@ -31,7 +35,7 @@ public class Firm
 	public string Web { get; private set; } = null!;//URL-адрес сайта
 
 	public bool ExistContact(Contact contact)
-		=> SubFirms.Exists(sb => sb.ExistContact(contact));
+		=> _subFirms.Exists(sb => sb.ExistContact(contact));
 
 	/// <summary>
 	/// в главную передать
@@ -39,13 +43,13 @@ public class Firm
 	/// <param name="contact"></param>
 	public void AddContact(Contact contact)
 	{
-		var mainSubFirm = SubFirms.SingleOrDefault(x => x.SubFirmType.IsMain);
+		var mainSubFirm = _subFirms.SingleOrDefault(x => x.SubFirmType.IsMain);
 		mainSubFirm?.AddContact(contact);
 	}
 
 	public void AddContactToSubFirm(Contact contact, SubFirmType subFirmType, bool checkOtherTypes = false)
 	{
-		var subFirm = SubFirms.FirstOrDefault(x => x.SubFirmType == subFirmType);
+		var subFirm = _subFirms.FirstOrDefault(x => x.SubFirmType == subFirmType);
 
 		if (subFirm is not null)
 		{
@@ -53,26 +57,32 @@ public class Firm
 			return;
 		}
 
-		if (SubFirms.Count == 1 && checkOtherTypes)
+		if (_subFirms.Count == 1 && checkOtherTypes)
 			this.AddContact(contact);
 	}
 
 	#region sub firms fields
 
-	public List<SubFirm> SubFirms { get; private set; } = new();//Подразделения фирмы
+	private List<SubFirm> _subFirms = new List<SubFirm>();//Подразделения фирмы
 
-	public int SubFirmsCount => SubFirms.Count;
+	public List<SubFirm> SubFirms 
+	{ 
+		get => new (_subFirms); 
+		private set => _subFirms = value.ToList(); 
+	}
 
-	public SubFirm GetMain() => SubFirms.First(x => x.SubFirmType.IsMain);
+	public int SubFirmsCount => _subFirms.Count;
+
+	public SubFirm GetMain() => _subFirms.First(x => x.SubFirmType.IsMain);
 
 	public void AddSubFirm(SubFirm subFirm)
-		=> SubFirms.Add(subFirm);
+		=> _subFirms.Add(subFirm);
 
 	#endregion sub firms fields
 
 	#region user fields
 
-	public Dictionary<string, string> UserFields { get; private set; } = new();//Пользовательские поля
+	private Dictionary<string, string> UserFields = new();//Пользовательские поля
 
 	public void SetField(string name, string value)
 		=> UserFields[name] = value;

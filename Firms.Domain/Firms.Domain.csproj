@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Models\FirmFactory.cs~RF4369ef.TMP" />
+    <None Remove="Models\FirmFactory.cs~RF47dcd9.TMP" />
+  </ItemGroup>
+
 </Project>
